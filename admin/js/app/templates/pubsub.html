@@ -1,0 +1,24 @@
+<div class="pubcol pubdata clientdata">
+  {{#each config.publish.messages}}
+  <div class="itemwrapper publisher">
+  <div class="item publisher {{type}}" id="pub_{{Safetify ../name}}_{{Safetify ../remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
+    <div class="deletebutton">X</div>
+    <div class="itemanchor">{{type}}</div>
+    <input type="text" class="edittext form-control">
+    {{name}}
+  </div>
+  </div>
+  {{/each}}
+</div>
+<div class="subcol subdata clientdata">
+  {{#each config.subscribe.messages}}
+  <div class="itemwrapper subscriber">
+  <div class="item subscriber {{type}}" id="sub_{{Safetify ../name}}_{{Safetify ../remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
+    <div class="deletebutton">X</div>
+    <div class="itemanchor">{{type}}</div>
+    <input type="text" class="edittext form-control">
+    {{name}}
+  </div>
+  </div>
+  {{/each}}
+</div>

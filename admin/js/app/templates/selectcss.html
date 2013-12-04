@@ -1,0 +1,61 @@
+<% if (pub) { %>
+  .item.publisher:not(#<%- id %>){
+    background-color:rgb(193,193,193);
+  }
+  .item.subscriber:not([class*='<%- type %>']){
+    background-color:rgb(193,193,193);
+  }
+  .item.subscriber.<%- type %> {
+    background-color:rgb(177,255,216);
+  }
+<% } else {  %>
+  .item.subscriber:not(#<%- id %>){
+    background-color:rgb(193,193,193);
+  }
+  .item.publisher:not([class*='<%- type %>']){
+    background-color:rgb(193,193,193);
+  }
+  .item.publisher.<%- type %> {
+    background-color:rgb(176,237,255);
+  }
+<% } %>
+.item.publisher.<%- id %> {
+  background-color:rgb(168,182,255);
+}
+.item.subscriber.<%- id %> {
+  background-color:rgb(129,212,170);
+}
+<% if (clicked) { %>
+  <% if (pub) { %>
+    .item.publisher:not(#<%- id %>),
+    .item.subscriber:not([class*='<%- type %>']) {
+  <% } else { %>
+    .item.subscriber:not(#<%- id %>),
+    .item.publisher:not([class*='<%- type %>']) {
+  <% } %>
+    opacity:.5;
+  }
+
+  .item.subscriber.<%- id %> .deletebutton,
+  .item.publisher.<%- id %> .deletebutton {
+    display:block;
+  }
+
+  .clientrow:not(.selected){
+    background-image: url();
+  }
+  .item.subscriber#<%- id %>{
+    outline: 10px solid rgb(129,212,170);
+    -webkit-transition: all 0s ease-in-out;
+  }
+  .item.publisher#<%- id %> {
+    outline: 10px solid rgb(111,193,222);
+    -webkit-transition: all 0s ease-in-out;
+  }
+  .item.subscriber#<%- id %>[class*='pub_']{
+    outline: 10px solid rgb(71,158,116);
+  }
+  .item.publisher#<%- id %>[class*='sub_']{
+    outline: 10px solid rgb(116,131,222);
+  }
+<% } %>

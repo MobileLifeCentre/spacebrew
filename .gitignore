@@ -24,3 +24,4 @@ DerivedData
 persistent_config.json
 data/*
 spacebrew_log*
+node_modules/

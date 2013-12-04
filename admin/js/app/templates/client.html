@@ -1,0 +1,35 @@
+<div class='clientrow' id="<%- ID %>">
+  <div class="clientanchor"></div>
+  <div class="clientcol clientdata">
+    <div class="clientnickname" title="(no description)">
+      <span><%- name %></span>
+    </div>
+    <div class="clientname" title="(no description)">
+      <span><%-name %> @ <%- remoteAddress %></span><span class="infobutton" id="button_info_<%- ID %>">?</span>
+    </div>
+  </div>
+
+
+  <div class="pubcol pubdata clientdata">
+      <% _.each(publish.messages, function(message) { %>
+        <div class="itemwrapper publisher">
+          <div class="item publisher <%- message.type %>" id="pub_<%- ID %>_<%- message.name.Safetify() %>_<%- message.type.Safetify() %>" valign="middle">
+            <div class="deletebutton">X</div>
+            <div class="itemanchor"><%- message.type %></div>
+            <%- message.name %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <div class="subcol subdata clientdata">
+      <% _.each(subscribe.messages, function(message) { %>
+        <div class="itemwrapper subscriber">
+          <div class="item subscriber <%- message.type %>" id="sub_<%- ID %>_<%- message.name.Safetify() %>_<%- message.type.Safetify() %>" valign="middle">
+            <div class="deletebutton">X</div>
+            <div class="itemanchor"><%- message.type %></div>
+            <%- message.name %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+</div>
