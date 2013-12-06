@@ -41,7 +41,7 @@ define(["App", "marionette", "views/ClientView", "collections/ClientCollection",
 				itemView.select();
 				selectedItem = itemView;
 
-				if (itemView.model.get("pub")) {
+				if (itemView.model.get("role") == "publisher") {
 					this.currentState = PUB_SELECTED;
 				} else {
 					this.currentState = SUB_SELECTED;
@@ -67,18 +67,18 @@ define(["App", "marionette", "views/ClientView", "collections/ClientCollection",
             	var pubSelected = (this.currentState == PUB_SELECTED),
             		pub = itemView.model.get("role") == "publisher",
             		type = itemView.model.get("type");
-            		
+            			
 				//if we clicked in the same column as the first click,
 				//then turn off 'selected' mode
 				if ((pubSelected && pub) ||
 						(!pubSelected && !pub)) {
-					itemView.edit();
+					itemView.unselect();
 				} else {
 					//only do something if we clicked on a similar-type item
 					if (type == selectedItem.model.get("type")) {
 						//trigger (un)routing
 						var activeId = selectedItem.model.get('ID');
-						var isSelected = selectedItem.isSelected();
+						var isSelected = itemView.isSelected();
 						var myId = itemView.model.get("ID");
 						var pubId = pubSelected ? activeId : myId;
 						var subId = pubSelected ? myId : activeId;
