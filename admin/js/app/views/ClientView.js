@@ -1,6 +1,6 @@
-define(["jquery", "underscore", "App", "marionette", "models/Client", "text!templates/client.html", "text!templates/selectcss.html"],
-    function($, _, app, Marionette, Client, template, cssTemplate) {
-        var ClientView = Marionette.ItemView.extend({
+define(["jquery", "underscore", "App", "marionette", "models/Client", "views/MessagesView", "text!templates/client.html", "text!templates/selectcss.html"],
+    function($, _, app, Marionette, Client, MessagesView, template, cssTemplate) {
+        var ClientView = Marionette.Layout.extend({
             template: _.template(template),
 
             cssTemplate: _.template(cssTemplate),
@@ -10,13 +10,18 @@ define(["jquery", "underscore", "App", "marionette", "models/Client", "text!temp
             model: Client,
 
             ui: {
+            },
 
+            regions: {
+                publishers : "#publishers",
+                subscribers: "#subscribers"
             },
 
             cssDiv: undefined,
 
-            initialize: function() {
+            initialize: function(msg) {
                 this.cssDiv = $("style#selectedCss");
+
             },
 
             events: {
@@ -55,9 +60,11 @@ define(["jquery", "underscore", "App", "marionette", "models/Client", "text!temp
             },
 
             onShow: function() {
-                var model = this.model.attributes;
-                this.processEndpoints("pub", myPlumb.sourceEndpoint, model.publish.messages);
-                this.processEndpoints("sub", myPlumb.targetEndpoint, model.subscribe.messages);
+                var publishersView = new MessagesView({collection: this.model.get("publishers"), role: "publishers"});
+                this.publishers.show(publishersView);
+
+                var subscribersView = new MessagesView({collection: this.model.get("subscribers"), role: "subscribers"});
+                this.subscribers.show(subscribersView);
             },
 
             select: function(client) {
@@ -76,24 +83,14 @@ define(["jquery", "underscore", "App", "marionette", "models/Client", "text!temp
                 this.updateCSS(client);
             },
 
-            updateCSS: function(item) {
-                this.cssDiv.text(this.cssTemplate(item));
+            edit: function(client) {
+                var item = client.item;
+
+                this.updateCSS(client);
             },
 
-            processEndpoints: function(type, endpoint, messages) {
-                var model = this.model.attributes,
-                    newEndpoint, id, currM, i;
-
-                if (messages) {
-                    i = messages.length;
-
-                    while (i--) {
-                        currM = messages[i];
-                        id = this.getCommItemSelector(type, model.name, model.remoteAddress, currM.name, currM.type);
-                        newEndpoint = jsPlumb.addEndpoint(id, endpoint);
-                        myPlumb.endpoints[id] = newEndpoint;
-                    }
-                }
+            updateCSS: function(item) {
+                this.cssDiv.text(this.cssTemplate(item));
             },
 
             templateHelpers: {
@@ -102,10 +99,6 @@ define(["jquery", "underscore", "App", "marionette", "models/Client", "text!temp
 
             remove: function() {
 
-            },
-
-            getCommItemSelector: function(publisher, clientName, remoteAddress, name, type) {
-                return publisher + "_" + clientName.Safetify() + "_" + remoteAddress.Safetify() + "_" + name + "_" + type.Safetify();
             }
         });
 

@@ -62,7 +62,7 @@ define(["App", "marionette", "views/ClientView", "collections/ClientCollection"]
 				if ((pubSelected && pub) ||
 						(!pubSelected && !pub)) {
 					client.clicked = false;
-					client.view.unselect(client);
+					client.view.edit(client);
 				} else {
 					//only do something if we clicked on a similar-type item
 					if (type == selectedItem.type) {

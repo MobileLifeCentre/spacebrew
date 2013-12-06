@@ -9,27 +9,10 @@
     </div>
   </div>
 
+  <div id="publishers" class="pubcol pubdata clientdata">
+    
+  </div>
+  <div id="subscribers" class="subcol subdata clientdata">
 
-  <div class="pubcol pubdata clientdata">
-      <% _.each(publish.messages, function(message) { %>
-        <div class="itemwrapper publisher">
-          <div class="item publisher <%- message.type %>" id="pub_<%- ID %>_<%- message.name.Safetify() %>_<%- message.type.Safetify() %>" valign="middle">
-            <div class="deletebutton">X</div>
-            <div class="itemanchor"><%- message.type %></div>
-            <%- message.name %>
-          </div>
-        </div>
-      <% }); %>
-    </div>
-    <div class="subcol subdata clientdata">
-      <% _.each(subscribe.messages, function(message) { %>
-        <div class="itemwrapper subscriber">
-          <div class="item subscriber <%- message.type %>" id="sub_<%- ID %>_<%- message.name.Safetify() %>_<%- message.type.Safetify() %>" valign="middle">
-            <div class="deletebutton">X</div>
-            <div class="itemanchor"><%- message.type %></div>
-            <%- message.name %>
-          </div>
-        </div>
-      <% }); %>
-    </div>
+  </div>
 </div>

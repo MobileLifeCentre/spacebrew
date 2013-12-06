@@ -34,6 +34,8 @@ require.config({
       // -------
       "backbone.validateAll": "../libs/plugins/Backbone.validateAll",
 
+      "backbone.editInPlace": "../libs/plugins/backbone.editinplace",
+
       "bootstrap": "../libs/plugins/bootstrap",
 
       "text": "../libs/plugins/text",
@@ -71,6 +73,8 @@ require.config({
       "json2": "../libs/plugins/json2",
 
       "marionette": "../libs/plugins/backbone.marionette",
+
+
 
       // jsPlumb
       "jsplumb": "../libs/jsplumb/jsPlumb-1.3.13-RC1",
