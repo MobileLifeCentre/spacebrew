@@ -1,15 +1,44 @@
-define(["marionette", "models/Message", "text!templates/message.html"],
-    function(Marionette, Message, template) {
+define(["App", "marionette", "models/Message", "text!templates/message.html"],
+    function(app, Marionette, Message, template) {
         var MessageView = Marionette.ItemView.extend({
             template: _.template(template),
             model: Message,
 
             initialize: function() {
-                this.el.className = "itemwrapper " + this.model.get("role");
             },
 
             onShow: function() {
                 this.addToJSPlumb();
+            },
+
+            events: {
+                "click .item": "onClickItem",
+            },
+
+            onClickItem: function(click) {
+                app.vent.trigger("click:client", this);
+            },
+
+            select: function() {
+                this.$el
+                    .addClass("selected")
+                    .closest(".clientrow")
+                        .addClass("selected");
+            },
+
+            edit: function() {
+
+            },
+
+            isSelected: function() {
+                return this.$el.hasClass("selected");
+            },
+
+            unselect: function() {
+                this.$el
+                    .removeClass("selected")
+                    .closest(".clientrow")
+                        .removeClass("selected");
             },
 
             addToJSPlumb: function() {

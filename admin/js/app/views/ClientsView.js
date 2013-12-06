@@ -1,5 +1,5 @@
-define(["App", "marionette", "views/ClientView", "collections/ClientCollection"],
-    function(app, Marionette, ClientView, ClientCollection) {
+define(["App", "marionette", "views/ClientView", "collections/ClientCollection", "text!templates/selectcss.html"],
+    function(app, Marionette, ClientView, ClientCollection, cssTemplate) {
     	app.clients = app.clients || new ClientCollection();
     	var NONE_SELECTED = {},
 		    PUB_SELECTED = {},
@@ -11,35 +11,47 @@ define(["App", "marionette", "views/ClientView", "collections/ClientCollection"]
 
             collection: app.clients,
 
+            cssTemplate: _.template(cssTemplate),
+
             selectedItem: {},
 
             currentState: NONE_SELECTED,
+
+            ui : {
+            },
 
             initialize: function() {
             	self = this;
             	app.vent.on("click:client", this.handleClick);
             },
 
-            handleClick: function(client) {
+            handleClick: function(itemView) {
             	if (self.currentState == NONE_SELECTED) {
-            		self.firstClick(client);
+            		self.firstClick(itemView);
             	} else {
-            		self.secondClick(client);
+            		self.secondClick(itemView);
             	}
             },
 
-            firstClick: function(client) {
-            	var item = client.item;
-            	client.clicked = true;
+            updateCSS: function(cssData) {
+                $("style#selectedCss").text(this.cssTemplate(cssData));
+            },
 
-				client.view.select(client);
-				selectedItem = client;
+            firstClick: function(itemView) {
+				itemView.select();
+				selectedItem = itemView;
 
-				if (client.pub) {
+				if (itemView.model.get("pub")) {
 					this.currentState = PUB_SELECTED;
 				} else {
 					this.currentState = SUB_SELECTED;
 				}
+				this.updateCSS({
+					id: itemView.model.get("ID"),
+					type: itemView.model.get("type"),
+					clicked: true,
+					pub: itemView.model.get("role") == "publisher" ? true : false
+				});
             },
 
             turnOffSelected: function() {
@@ -51,26 +63,23 @@ define(["App", "marionette", "views/ClientView", "collections/ClientCollection"]
             	this.currentState = NONE_SELECTED;
             },
 
-            secondClick: function(client) {
+            secondClick: function(itemView) {
             	var pubSelected = (this.currentState == PUB_SELECTED),
-            		pub = client.pub,
-            		item = client.item,
-            		type = client.type;
-
+            		pub = itemView.model.get("role") == "publisher",
+            		type = itemView.model.get("type");
+            		
 				//if we clicked in the same column as the first click,
 				//then turn off 'selected' mode
 				if ((pubSelected && pub) ||
 						(!pubSelected && !pub)) {
-					client.clicked = false;
-					client.view.edit(client);
+					itemView.edit();
 				} else {
 					//only do something if we clicked on a similar-type item
-					if (type == selectedItem.type) {
-
+					if (type == selectedItem.model.get("type")) {
 						//trigger (un)routing
-						var activeId = selectedItem.item.prop('id');
-						var isSelected = item.hasClass(activeId);
-						var myId = item.prop('id');
+						var activeId = selectedItem.model.get('ID');
+						var isSelected = selectedItem.isSelected();
+						var myId = itemView.model.get("ID");
 						var pubId = pubSelected ? activeId : myId;
 						var subId = pubSelected ? myId : activeId;
 

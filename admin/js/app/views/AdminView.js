@@ -6,7 +6,7 @@ define(["marionette", "App", "views/ClientsView", "views/RoutesView", "text!temp
             	clientList: "#client_list",
                 routeList: "#routes_list"
             },
-            onRender: function() {
+            onShow: function() {
                 // TO-DO move this behaviour to its own controller
                 app.clientsView = new ClientsView();
             	this.clientList.show(app.clientsView);

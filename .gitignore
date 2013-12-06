@@ -6,6 +6,7 @@ lib-cov
 *.out
 *.pid
 *.gz
+node_modules/
 
 pids
 logs
@@ -24,4 +25,3 @@ DerivedData
 persistent_config.json
 data/*
 spacebrew_log*
-node_modules/
