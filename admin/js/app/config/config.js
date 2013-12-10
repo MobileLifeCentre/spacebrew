@@ -42,6 +42,14 @@ require.config({
 
       "jasminejquery": "../libs/plugins/jasmine-jquery",
 
+      // Dataflow
+
+      "dataflow": "../libs/dataflow/dataflow.build",
+
+      "hammer": "../libs/dataflow/hammer.min",
+
+      "jquery.touch": "../libs/dataflow/jquery.ui.touch-punch",
+
       // Flat-UI
 
       //"jquery.ui.custom" : "../libs/flat-ui/jquery-ui-1.10.3.custom.min",
@@ -133,6 +141,16 @@ require.config({
       "jquery.placeholder": ["jquery"],
 
       "jquery.stacktable": ["jquery"],
+
+
+      // Dataflow
+
+      "dataflow": {
+        "deps": ["jquery", "jqueryui", "backbone", "underscore", "hammer", "jquery.touch"],
+        "exports": "Dataflow"
+      },
+
+      "jquery.touch": ["jquery", "jqueryui"],
 
       // Flat-UI
       "flatui": ["jquery", "bootstrap", "jquery.ui.custom", 

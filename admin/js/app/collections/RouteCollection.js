@@ -1,6 +1,5 @@
 define(["jquery","backbone", "App", "models/Route", "init/Spacebrew"],
   function($, Backbone, app, Route, Spacebrew) {
-    appo = app;
     var RouteCollection = Backbone.Collection.extend({
       model: Route,
 
@@ -47,36 +46,7 @@ define(["jquery","backbone", "App", "models/Route", "init/Spacebrew"],
         a.subscriber.clientName == b.subscriber.clientName &&
         a.subscriber.clientName == b.subscriber.clientName;
 	}
-
-
-    app.vent.on("add:route", function(routeJSON) {
-	  app.routes.add(new Route(routeJSON));
-	});
-
-	app.vent.on("remove:route", function(routeJSON) {
-		var publisher = routeJSON.publisher,
-			subscriber = routeJSON.subscriber;
-
-		var route = undefined; 
-		for (var i = 0; i < app.routes.length; ++i) {
-			route = app.routes.at(i);
-
-			if (routeEquals(route.attributes, routeJSON)) {
-				break;
-			}
-		};
-
-		route.destroy();
-		app.routes.remove(route);
-	});
-
-	app.vent.on("create:route", function(routeJSON) {
-		app.routes.changeRoute("add", routeJSON.publisher, routeJSON.subscriber);
-	});
-
-	app.vent.on("delete:route", function(routeJSON) {
-		app.routes.changeRoute("remove", routeJSON.publisher, routeJSON.subscriber);
-	});
+    
 
     return RouteCollection;
   }

@@ -11,6 +11,8 @@ define(["marionette", "handlebars", "spacebrew.plumbing"],
             
         });
 
+        window.app = app;
+
         // Returns the View class
         return app;
     }

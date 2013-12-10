@@ -6,10 +6,11 @@ define(["App", "marionette"], function(app, Marionette) {
 		handleRouteMsg: function(msg) {
 			switch (msg.route.type) {
 				case "add":
-				app.vent.trigger("add:route", msg.route);
+					console.log("DSFASDFASDFASDFASDFA", msg);
+					app.vent.trigger("add:route", msg.route);
 				break;
 				case "remove":
-				app.vent.trigger("remove:route", msg.route);
+					app.vent.trigger("remove:route", msg.route);
 				break;
 			}
 		},

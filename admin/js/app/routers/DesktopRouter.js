@@ -1,7 +1,7 @@
 // DesktopRouter.js
 // ----------------
-define(["jquery", "backbone", "marionette", "App", "init/Spacebrew", "views/AdminView"],
-    function($, Backbone, Marionette, app, Spacebrew, ClientsView) {
+define(["jquery", "backbone", "marionette", "App", "init/Spacebrew", "views/DataflowView"],
+    function($, Backbone, Marionette, app, Spacebrew, DataflowView) {
         app.start();
         Spacebrew.start();
 
@@ -23,7 +23,7 @@ define(["jquery", "backbone", "marionette", "App", "init/Spacebrew", "views/Admi
 
             index: function() {
                 // Instantiates a new view which will render the header text to the page
-                app.content.show(new ClientsView());
+                app.content.show(new DataflowView());
             }
 
         });

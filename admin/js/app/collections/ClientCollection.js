@@ -4,9 +4,11 @@ define(["jquery","backbone", "App", "models/Client"],
       model: Client
     });
 
+    /*app.clients = app.clients || new ClientCollection();
+
     app.vent.on("new:client", function(clientJSON) {
       app.clients.add(new Client(clientJSON));
-    });
+    });*/
 
     return ClientCollection;
   }

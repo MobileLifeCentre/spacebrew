@@ -10,20 +10,6 @@ define(["jquery", "backbone", "init/Spacebrew"],
 
             },
 
-            /*destroy: function() {
-                console.log("destroy");
-                Spacebrew.send(JSON.stringify({
-                    route: {
-                        type:'remove',
-                        publisher: this.get("publisher"),
-                        subscriber: this.get("subscriber")
-                    }
-                }));
-
-                // TO-DO Add result from Spacebrew send?
-                return { successs: "ok"};
-            },*/
-
             equals: function(json) {
                 var publisher = this.model.get("publisher"),
                     subscriber = this.model.get("subscriber");

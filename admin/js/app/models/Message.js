@@ -1,5 +1,5 @@
-define(["jquery", "backbone"],
-    function($, Backbone) {
+define(["jquery", "backbone", "collections/RouteCollection"],
+    function($, Backbone, RouteCollection) {
         var Message = Backbone.Model.extend({
             initialize: function(msg) {
                 var shortRole;
@@ -16,6 +16,11 @@ define(["jquery", "backbone"],
                 this.set("role", msg.role);
 
                 this.model = msg;
+
+                this.set("routes", new RouteCollection());
+
+                this.on("change:routes", function() { 
+                });
             },
 
             defaults: {
