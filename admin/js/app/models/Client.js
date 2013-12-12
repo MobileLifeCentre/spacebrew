@@ -29,6 +29,11 @@ define(["jquery", "backbone", "collections/MessageCollection", "models/Message"]
                 }
             },
 
+            equals: function(clientJSON) {
+                return this.get("name") == clientJSON.name &&
+                        this.get("remoteAddress") == clientJSON.remoteAddress;
+            },
+
             defaults: {
 
             },

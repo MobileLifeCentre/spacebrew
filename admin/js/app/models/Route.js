@@ -11,15 +11,15 @@ define(["jquery", "backbone", "init/Spacebrew"],
             },
 
             equals: function(json) {
-                var publisher = this.model.get("publisher"),
-                    subscriber = this.model.get("subscriber");
+                var publisher = this.get("publisher"),
+                    subscriber = this.get("subscriber");
 
-                return attr.publisher.name == publisher.name &&
-                attr.publisher.clientName == publisher.clientName &&
-                attr.publisher.clientName == publisher.clientName &&
-                attr.subscriber.name == subscriber.name &&
-                attr.subscriber.clientName == subscriber.clientName &&
-                attr.subscriber.clientName == subscriber.clientName;
+                return json.publisher.name == publisher.name &&
+                json.publisher.clientName == publisher.clientName &&
+                json.publisher.clientName == publisher.clientName &&
+                json.subscriber.name == subscriber.name &&
+                json.subscriber.clientName == subscriber.clientName &&
+                json.subscriber.clientName == subscriber.clientName;
             }
         });
 

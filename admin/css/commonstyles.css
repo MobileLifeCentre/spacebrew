@@ -337,3 +337,17 @@ body{
 div.links{
    cursor: hand; cursor: pointer; 
 }
+
+.dataflow-port-hole.route0  { stroke: hsl(220, 10%, 60%); background-color: hsl(220, 10%, 55%);} /* Gray */
+.dataflow-port-hole.route1  { stroke: hsl(  0, 68%, 70%); background-color: hsl(  0, 68%, 65%);} /* Red */
+.dataflow-port-hole.route2  { stroke: hsl( 30, 68%, 70%); background-color: hsl( 30, 68%, 65%);} /* Orange */
+.dataflow-port-hole.route3  { stroke: hsl( 60, 68%, 70%); background-color: hsl( 60, 68%, 65%);} /* Yellow */
+.dataflow-port-hole.route4  { stroke: hsl( 90, 68%, 70%); background-color: hsl( 90, 68%, 65%);} /* Lime Green */
+.dataflow-port-hole.route5  { stroke: hsl(120, 68%, 70%); background-color: hsl(120, 68%, 65%);} /* Green */
+.dataflow-port-hole.route6  { stroke: hsl(150, 68%, 70%); background-color: hsl(150, 68%, 65%);} /* Green-Turq */
+.dataflow-port-hole.route7  { stroke: hsl(180, 68%, 70%); background-color: hsl(180, 68%, 65%);} /* Bright Blue */
+.dataflow-port-hole.route8  { stroke: hsl(210, 68%, 70%); background-color: hsl(210, 68%, 65%);} /* blue */
+.dataflow-port-hole.route9  { stroke: hsl(240, 68%, 70%); background-color: hsl(240, 68%, 65%);} /* Purple */
+.dataflow-port-hole.route10 { stroke: hsl(270, 68%, 70%); background-color: hsl(270, 68%, 65%);} /* Violet */
+.dataflow-port-hole.route11 { stroke: hsl(300, 68%, 70%); background-color: hsl(300, 68%, 65%);} /* Pink */
+.dataflow-port-hole.route12 { stroke: hsl(330, 68%, 70%); background-color: hsl(330, 68%, 65%);} 

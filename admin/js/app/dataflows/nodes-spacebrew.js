@@ -1,6 +1,6 @@
 define(["dataflow"], 
   function(Dataflow) {
-    var BaseResizable = Dataflow.prototype.node("base");
+    var BaseResizable = Dataflow.prototype.node("base-resizable");
     var DataflowSpacebrew = Dataflow.prototype.node("dataflow-spacebrew");
   
     var Input = Dataflow.prototype.module("input");
@@ -26,6 +26,7 @@ define(["dataflow"],
       initialize: function(options) {
         BaseResizable.Model.prototype.initialize.call(this);
 
+        this.set("remoteAddress", options.client.get("remoteAddress"));
         this.client = options.client;
 
         this.client.get("subscribers").each(function(message) {
@@ -94,6 +95,7 @@ define(["dataflow"],
         }
       },
       addOutput: function(output) {
+        
         var newOutput = new Output.Model({
           id: output.get("ID"),
           label: output.get("name"),
@@ -101,8 +103,14 @@ define(["dataflow"],
           parentNode: this,
           outputNode: output
         });
+
         this.outputs.add(newOutput);
         output.set("parentNode", this);
+
+        // TO-DO create proper adaptation of size to label
+        var size = newOutput.get("label").length*20;
+        if (this.get("w") < size) this.set({"w": size});
+        
       },
       removeInput: function(node) {
         var input = this.inputs.get(node.id);

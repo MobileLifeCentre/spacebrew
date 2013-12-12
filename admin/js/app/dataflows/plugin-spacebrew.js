@@ -1,6 +1,10 @@
 define(["App", "underscore", "dataflow", "collections/ClientCollection", "models/Client", "collections/RouteCollection", "models/Route"], 
   function(app, _, Dataflow, ClientCollection, Client, RouteCollection, Route) {
     var Spacebrew = Dataflow.prototype.plugin("spacebrew");
+
+    // ==============
+    // CLIENTS
+    // ==============
     var clients = new ClientCollection();
     window.clients = clients;
     app.vent.on("new:client", function(clientJSON) {
@@ -10,8 +14,13 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
       Spacebrew.update();
     });
 
-    window.Spacebrew = Spacebrew;
+    app.vent.on("delete:client", function(clientJSON) {
+      Spacebrew.deleteNode(clientJSON);
+    });
 
+    // ==============
+    // Routes
+    // ==============
     var routes = new RouteCollection();
     var Edge = Dataflow.prototype.module("edge");
 
@@ -27,13 +36,37 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
       for (var i = 0; i < routes.length; ++i) {
         route = routes.at(i);
 
-        if (route.attributes, routeJSON)) {
+        if (route.equals(routeJSON)) {
           break;
         }
       };
-
       route.destroy();
       routes.remove(route);
+
+      var targetEdge = {};
+      Spacebrew.dataflow.currentGraph.edges.each(function(edge) {
+        if (edge.source.get("label") == routeJSON.publisher.name &&
+            edge.target.get("label") == routeJSON.subscriber.name &&
+            edge.source.parentNode.get("label") == routeJSON.publisher.clientName &&
+            edge.target.parentNode.get("label") == routeJSON.subscriber.clientName) {
+          targetEdge = edge;
+        }
+      });
+      Spacebrew.dataflow.currentGraph.edges.remove(targetEdge);
+    });
+
+    // ==============
+    // Messages
+    // ==============
+
+    app.vent.on("new:message", function(messageJSON) {
+        Spacebrew.dataflow.currentGraph.nodes.each(function(node) {
+          node.outputs.each(function(output) {
+            if (output.get("label") == messageJSON.name) {
+              output.view.flickr();
+            }
+          })
+        });
     });
 
     Spacebrew.initialize = function(dataflow) {
@@ -44,9 +77,16 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
       Spacebrew.excluded = ["base", "base-resizable"];
 
 
+      dataflow.on("edge:remove", function(graph, edge) {
+        app.vent.trigger("delete:route", edge);
+      });
+
+      dataflow.on("edge:add", function(graph, edge) {
+        app.vent.trigger("create:route", edge);
+      });
+
       Spacebrew.destroyEdge = function(routeJSON) {
         console.log(Spacebrew.dataflow.currentGraph.edges);
-
       };
 
       Spacebrew.createEdge = function(routeJSON) {
@@ -66,7 +106,8 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
           if (clientName == publisher.clientName 
             && clientRemoteAddress == publisher.remoteAddress) {
             publisherClient = client;
-          } else if (clientName == subscriber.clientName 
+          } 
+          if (clientName == subscriber.clientName 
             && clientRemoteAddress == subscriber.remoteAddress) {
             subscriberClient = client;
           }
@@ -92,7 +133,8 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
 
           if (client == publisherClient) {
             nodeSource = node;
-          } else if (client == subscriberClient) {
+          } 
+          if (client == subscriberClient) {
             nodeTarget = node;
           }
         });
@@ -130,6 +172,18 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         Spacebrew.dataflow.currentGraph.edges.add(new Edge.Model(edge));
       }
 
+      var deleteNode = function(client) {
+        var targetNode;
+        dataflow.currentGraph.nodes.each(function(node) {
+          if (node.client.equals(client)) {
+            clients.remove(node.client);
+            targetNode = node;
+          }
+        });
+
+        dataflow.currentGraph.nodes.remove(targetNode);
+      };
+      Spacebrew.deleteNode = deleteNode;
 
       var addNode = function(client, x, y) {
         return function() {
@@ -138,14 +192,14 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
 
           // Current zoom
           zoom = dataflow.currentGraph.get('zoom');
-
+          Spacebrew.update();
           // Find vacant id
           var id = 1;
           while (dataflow.currentGraph.nodes.get(id)){
             id++;
           }
           // Position
-          x = x===undefined ? 200 : x;
+          x = x===undefined ? 500*id : x;
           y = y===undefined ? 200 : y;
           x = x/zoom - dataflow.currentGraph.get("panX");
           y = y/zoom - dataflow.currentGraph.get("panY");
@@ -173,6 +227,18 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
 
       var addSpacebrewItem = function(client) {
         var name = client.get("name");
+
+        // We just show as an item if it is not added already
+        var alreadyAdded = false;
+        Spacebrew.dataflow.currentGraph.nodes.each(function (node, nodeName) {
+          if (name == node.get("label")) {
+            alreadyAdded = true;
+            return;
+          }
+        });
+        if (alreadyAdded) return;
+
+
         var $item = $(_.template(itemTemplate, {
           name: name,
           description: client.remoteAddress,

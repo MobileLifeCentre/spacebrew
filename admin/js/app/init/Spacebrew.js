@@ -4,7 +4,6 @@ define(["app", "controllers/spacebrewController"], function(app, spacebrewContro
 	var port = gup('port') || '9000';
 	var debug = gup('debug') || false;
 	var ws;
-
 	var reconnect_timer = undefined;
 	var setupWebsocket = function() {
 		ws = new WebSocket("ws://"+server+":" + Number(port));
@@ -103,8 +102,7 @@ define(["app", "controllers/spacebrewController"], function(app, spacebrewContro
 	    return results[1];
 	};
 
-
-	return {
+	window.spacebrew = {
 		start: setupWebsocket,
 		send: function(message) {
 			if (debug) {
@@ -112,5 +110,7 @@ define(["app", "controllers/spacebrewController"], function(app, spacebrewContro
 			}
 			ws.send(message);
 		}
-	}
+	};
+
+	return window.spacebrew; 
 });

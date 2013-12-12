@@ -737,15 +737,21 @@ CircularBuffer.IndexError= {};
         // there is a connection already, decline
         return false;
       }
+      // TO-DO added typing
+      if (edge && !(this.get("type") == edge.source.get("type") && this.get("type") == edge.target.get("type"))) {
+        return false;
+      }
       return true;
     },
-    connect: function(edge){
+    connect: function(edge) {
       if (!this.canConnect(edge)) {
-        return;
+        return false;
       }
       this.connected.push(edge);
       this.connected = _.uniq(this.connected);
       this.trigger('connected');
+
+      return true;
     },
     disconnect: function(edge){
       this.connected = _.without(this.connected, edge);
@@ -832,9 +838,9 @@ CircularBuffer.IndexError= {};
           // Dataflow.log("node or port not found for edge", this);
         }
 
-        this.source.connect(this);
-        this.target.connect(this);
-
+        if (!(this.source.connect(this) && this.target.connect(this))) {
+          
+        }
         // Set up listener
         sourceNode.on("send:"+this.source.id, this.send, this);
 
@@ -1653,6 +1659,11 @@ CircularBuffer.IndexError= {};
         return;
       }
 
+      // TO-DO changed
+      var plugColor = this.typeToRouteColor(this.model.get("type"));
+      this.$(".dataflow-port-hole").addClass("route"+plugColor);
+      // ---------
+
       var self = this;
       this.$(".dataflow-port-plug").draggable({
         cursor: "pointer",
@@ -1717,6 +1728,7 @@ CircularBuffer.IndexError= {};
       }
 
       this.setInputValue(input, type, val);
+      
 
       this.model.parentNode.on('change:state', function () {
         var state = this.model.parentNode.get('state');
@@ -1743,6 +1755,20 @@ CircularBuffer.IndexError= {};
       this.model.on('disconnected', function () {
         this.$input.removeClass('connected');
       }, this);
+    },
+    typeToRouteColor: function(type) {
+      console.log(type);
+      // TO-DO isolate this
+      switch(type) {
+        case "range":
+          return "9";
+        case "int":
+          return "1";
+        case "boolean":
+          return "2";
+      }
+
+      return "8";
     },
     renderInput: function (type, options) {
       var input;
@@ -1996,7 +2022,7 @@ CircularBuffer.IndexError= {};
         return false;
       }
 
-      if (!this.model.canConnect()) {
+      if (!this.model.canConnect() || this.model.get("type") != otherPort.get("type")) {
         // Port declined the connection, abort
         return;
       }
@@ -2154,6 +2180,10 @@ CircularBuffer.IndexError= {};
         this._holePosition = null;
       }.bind(this));
 
+
+      var plugColor = this.typeToRouteColor(this.model.get("type"));
+      this.$(".dataflow-port-hole").addClass("route"+plugColor);
+
       if (!this.model.parentNode.parentGraph.dataflow.editable) {
         // No drag and drop
         return;
@@ -2186,6 +2216,20 @@ CircularBuffer.IndexError= {};
         activeClassType: "droppable-hover"
       });
     },
+    typeToRouteColor: function(type) {
+      console.log(type);
+      // TO-DO isolate this
+      switch(type) {
+        case "range":
+          return "9";
+        case "int":
+          return "1";
+        case "boolean":
+          return "2";
+      }
+
+      return "8";
+    },
     render: function () {
       return this;
     },
@@ -2217,6 +2261,7 @@ CircularBuffer.IndexError= {};
       this.model.parentNode.parentGraph.view.startHighlightCompatible(this.model);
     },
     newEdgeDrag: function(event, ui){
+      this.flickr();
       // Don't drag node
       event.stopPropagation();
       if (!this.previewEdgeView || !ui) {
@@ -2324,6 +2369,18 @@ CircularBuffer.IndexError= {};
     unblur: function () {
       this.$el.removeClass('blur');
     },
+    // TO-DO changed
+    flickr: function() {
+      var output = this.$(".dataflow-port-hole"),
+          self = this;
+      output.css("background-color", "white");
+      if (this.timeoutFlickr) {
+        clearTimeout(this.timeoutFlickr);
+      } 
+      this.timeoutFlickr = setTimeout(function() {
+        output.css("background-color", "");
+      }, 100);
+    },
     connectEdge: function(event, ui) {
       // Dropped to this el
       var otherPort = ui.helper.data("port");
@@ -2334,7 +2391,7 @@ CircularBuffer.IndexError= {};
         return false;
       }
 
-      if (!this.model.canConnect()) {
+      if (!this.model.canConnect() || this.model.get("type") != otherPort.get("type")) {
         // Port declined the connection, abort
         return;
       }
@@ -2525,6 +2582,10 @@ CircularBuffer.IndexError= {};
         "class": "dataflow-edge-shadow"
       });
 
+      // TO-DO changed
+      var plugColor = this.model.target? this.model.target.get("type") :  this.model.source.get("type"); 
+      this.model.set("route", this.typeToRouteColor(plugColor));
+      // ------
       // Color route
       if (this.model.get("route") !== undefined) {
         this.elEdge.setAttribute("class", "dataflow-edge-wire route"+this.model.get("route"));
@@ -2590,6 +2651,20 @@ CircularBuffer.IndexError= {};
       if (this.model.parentGraph && this.model.parentGraph.view){
         this.model.parentGraph.view.sizeSVG();
       }
+    },
+    typeToRouteColor: function(type) {
+      console.log(type);
+      // TO-DO isolate this
+      switch(type) {
+        case "range":
+          return "9";
+        case "int":
+          return "1";
+        case "boolean":
+          return "2";
+      }
+
+      return "8";
     },
     fade: function(){
       if (this.model.source.parentNode.get("selected") || this.model.target.parentNode.get("selected")) {
