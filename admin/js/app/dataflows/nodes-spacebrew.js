@@ -1,6 +1,6 @@
-define(["dataflow"], 
+define(["dataflow", "dataflows/nodes-spacebrew-base-circle"], 
   function(Dataflow) {
-    var BaseResizable = Dataflow.prototype.node("base-resizable");
+    var SpacebrewBase = Dataflow.prototype.node("spacebrew-base-circle");
     var DataflowSpacebrew = Dataflow.prototype.node("dataflow-spacebrew");
   
     var Input = Dataflow.prototype.module("input");
@@ -9,9 +9,9 @@ define(["dataflow"],
 
     DataflowSpacebrew.icon = 'fa-rocket';
 
-    DataflowSpacebrew.Model = BaseResizable.Model.extend({
+    DataflowSpacebrew.Model = SpacebrewBase.Model.extend({
       defaults: function() {
-        var defaults = BaseResizable.Model.prototype.defaults.call(this);
+        var defaults = SpacebrewBase.Model.prototype.defaults.call(this);
         defaults.label = "subgraph";
         defaults.icon = DataflowSpacebrew.icon;
         defaults.type = "dataflow-spacebrew";
@@ -24,7 +24,7 @@ define(["dataflow"],
         return defaults;
       },
       initialize: function(options) {
-        BaseResizable.Model.prototype.initialize.call(this);
+        SpacebrewBase.Model.prototype.initialize.call(this);
 
         this.set("remoteAddress", options.client.get("remoteAddress"));
         this.client = options.client;
@@ -123,7 +123,7 @@ define(["dataflow"],
         this.outputs.remove(output);
       },
       remove: function() {
-        BaseResizable.Model.prototype.remove.call(this);
+        SpacebrewBase.Model.prototype.remove.call(this);
         this.graph.remove();
       },
       inputs:[
@@ -133,14 +133,14 @@ define(["dataflow"],
     });
 
 
-    DataflowSpacebrew.View = BaseResizable.View.extend({
+    DataflowSpacebrew.View = SpacebrewBase.View.extend({
       events: function() {
-        var events = BaseResizable.View.prototype.events.call(this);
+        var events = SpacebrewBase.View.prototype.events.call(this);
         events["click .show-subgraph"] = "showSubgraph";
         return events;
       },
       initialize: function(options) {
-        BaseResizable.View.prototype.initialize.call(this, options);
+        SpacebrewBase.View.prototype.initialize.call(this, options);
         this.model.graph.view = new Graph.View({model: this.model.graph});
 
         // Listen for label changes

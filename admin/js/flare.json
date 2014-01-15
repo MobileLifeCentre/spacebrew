@@ -1,0 +1,26 @@
+{
+ "name": "flare",
+ "size": 11721,
+ "children": [
+  {
+   "name": "analytics",
+   "size": 99999
+  },
+  {
+   "name": "data",
+   "size": 11721,
+   "children": [
+    {
+     "name": "converters",
+     "children": [
+      {"name": "Converters", "size": 1221},
+      {"name": "DelimitedTextConverter", "size": 4294}
+     ]
+    },
+    {"name": "DataField", "size": 11721},
+    {"name": "DataSchema", "size": 11721},
+    {"name": "DataSet", "size": 11721}
+   ]
+  }
+ ]
+}

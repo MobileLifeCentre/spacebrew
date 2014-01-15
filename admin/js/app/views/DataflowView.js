@@ -1,4 +1,4 @@
-define(["App", "marionette", "text!templates/dataflow.html", "dataflow", "dataflows/nodes-spacebrew", "dataflows/plugin-spacebrew"],
+define(["App", "marionette", "text!templates/dataflow.html", "dataflow", "dataflows/nodes-spacebrew", "dataflows/plugin-spacebrew", "nodes"],
     function(app, Marionette, template, Dataflow, DataflowSpacebrew) {
         var DataflowView = Marionette.ItemView.extend({
             template: _.template(template),
@@ -11,7 +11,6 @@ define(["App", "marionette", "text!templates/dataflow.html", "dataflow", "datafl
             },
 
             onShow: function() {
-            	console.log(Dataflow);
             	var dataflow = new Dataflow({
 		          appendTo: "#graph1",
 		          debug: "true"

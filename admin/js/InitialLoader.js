@@ -64,20 +64,39 @@
         }
       }
     };
-    
-    // Desktop CSS and JavaScript files to load
-    filesToLoad = {
-      // CSS file that is loaded when in development mode
-      "dev-css": "css/desktop.css",
-      // CSS file that is loaded when in production mode
-      "prod-css": "css/desktop.min.css",
-      // Require.js configuration file that is also loaded when in development mode
-      "dev-js": { "data-main": "js/app/config/config.js", "src": "js/libs/require.js" },
-      // JavaScript initialization file that is loaded when in development mode
-      "dev-init": "js/app/init/DesktopInit.js",
-      // JavaScript file that is loaded when in production mode
-      "prod-js": "js/app/init/DesktopInit.min.js"
-    };
+
+
+    // Mobile/Tablet Logic
+    if((/iPhone|iPod|iPad|Android|BlackBerry|Opera Mini|IEMobile/).test(ua)) {
+      // Mobile/Tablet CSS and JavaScript files to load
+      filesToLoad = {
+        // CSS file that is loaded when in development mode
+        "dev-css": "css/desktop.css",
+        // CSS file that is loaded when in production mode
+        "prod-css": "css/desktop.min.css",
+        // Require.js configuration file that is loaded when in development mode
+        "dev-js": { "data-main": "js/app/config/config.js", "src": "js/libs/require.js" },
+        // JavaScript initialization file that is also loaded when in development mode
+        "dev-init": "js/app/init/DesktopInit.js",
+        // JavaScript file that is loaded when in production mode
+        "prod-js": "js/app/init/DesktopInit.min.js",
+      };
+    } // Desktop
+    else {
+      // Desktop CSS and JavaScript files to load
+      filesToLoad = {
+        // CSS file that is loaded when in development mode
+        "dev-css": "css/desktop.css",
+        // CSS file that is loaded when in production mode
+        "prod-css": "css/desktop.min.css",
+        // Require.js configuration file that is also loaded when in development mode
+        "dev-js": { "data-main": "js/app/config/config.js", "src": "js/libs/require.js" },
+        // JavaScript initialization file that is loaded when in development mode
+        "dev-init": "js/app/init/DesktopInit.js",
+        // JavaScript file that is loaded when in production mode
+        "prod-js": "js/app/init/DesktopInit.min.js"
+      };
+    }
 
     boilerplateMVC.loadFiles(production, filesToLoad, function() {
       if(!production && window.require) {

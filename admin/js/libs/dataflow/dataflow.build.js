@@ -1740,6 +1740,7 @@ CircularBuffer.IndexError= {};
         this.$el.addClass('hasvalue');
       }.bind(this));
 
+      // Label for node inspector
       var label = $('<label class="input-type-' + type + '">')
         .append( input )
         .prepend( '<span>' + this.model.get("label") + "</span> " );
@@ -3048,6 +3049,10 @@ CircularBuffer.IndexError= {};
     template: _.template(template),
     className: "dataflow-node-inspector",
     events: {
+      'click .dataflow-node-inspector-inputs': 'onClickInput'
+    },
+    onClickInput: function(event) {
+      console.log(event.originalTarget);
     },
     initialize: function(options) {
       this.$el.html(this.template(this.model.toJSON()));

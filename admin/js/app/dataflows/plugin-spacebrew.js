@@ -1,12 +1,11 @@
-define(["App", "underscore", "dataflow", "collections/ClientCollection", "models/Client", "collections/RouteCollection", "models/Route"], 
+define(["App", "underscore", "dataflow", "collections/ClientCollection", "models/Client", "collections/RouteCollection", "models/Route", "dataflows/plugin-spacebrew-inspector"], 
   function(app, _, Dataflow, ClientCollection, Client, RouteCollection, Route) {
     var Spacebrew = Dataflow.prototype.plugin("spacebrew");
 
     // ==============
-    // CLIENTS
+    // CLIENTS / Nodes
     // ==============
     var clients = new ClientCollection();
-    window.clients = clients;
     app.vent.on("new:client", function(clientJSON) {
       var client = new Client(clientJSON);
       clients.add(client);
@@ -19,7 +18,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
     });
 
     // ==============
-    // Routes
+    // ROUTES / Edges
     // ==============
     var routes = new RouteCollection();
     var Edge = Dataflow.prototype.module("edge");
@@ -29,20 +28,19 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
     });
 
     app.vent.on("remove:route", function(routeJSON) {
+      // We find route
+      var routeTarget = undefined; 
+      routes.each(function(route) {
+        if (route.equals(routeJSON)) {
+          routeTarget = route;
+        }
+      });
+      routes.remove(route);
+
       var publisher = routeJSON.publisher,
         subscriber = routeJSON.subscriber;
 
-      var route = undefined; 
-      for (var i = 0; i < routes.length; ++i) {
-        route = routes.at(i);
-
-        if (route.equals(routeJSON)) {
-          break;
-        }
-      };
-      route.destroy();
-      routes.remove(route);
-
+      // We find Edge
       var targetEdge = {};
       Spacebrew.dataflow.currentGraph.edges.each(function(edge) {
         if (edge.source.get("label") == routeJSON.publisher.name &&
@@ -58,7 +56,6 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
     // ==============
     // Messages
     // ==============
-
     app.vent.on("new:message", function(messageJSON) {
         Spacebrew.dataflow.currentGraph.nodes.each(function(node) {
           node.outputs.each(function(output) {
@@ -74,9 +71,8 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
       var $Spacebrew = $('<ul class="dataflow-plugin-spacebrew" />');
       $container.append($Spacebrew);
       Spacebrew.dataflow = dataflow;
-      Spacebrew.excluded = ["base", "base-resizable"];
 
-
+      // Communication dataflow -> Spacebrew
       dataflow.on("edge:remove", function(graph, edge) {
         app.vent.trigger("delete:route", edge);
       });
@@ -84,10 +80,6 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
       dataflow.on("edge:add", function(graph, edge) {
         app.vent.trigger("create:route", edge);
       });
-
-      Spacebrew.destroyEdge = function(routeJSON) {
-        console.log(Spacebrew.dataflow.currentGraph.edges);
-      };
 
       Spacebrew.createEdge = function(routeJSON) {
         var route = new Route(routeJSON);
@@ -99,6 +91,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         var publisherClient = undefined,
             subscriberClient = undefined;
 
+        // We find publisher and subscriber
         clients.each(function(client) {
           var clientName = client.get("name"),
               clientRemoteAddress = client.get("remoteAddress");
@@ -113,6 +106,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
           }
         });
 
+        // We add the message
         publisherClient.get("publishers").each(function(message) {
           if (message.get("name") == publisher.name) {
             message.get("routes").add(route);
@@ -125,6 +119,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
           }
         });
 
+        // Same for nodes
         var nodeSource,
             nodeTarget;
 
@@ -172,7 +167,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         Spacebrew.dataflow.currentGraph.edges.add(new Edge.Model(edge));
       }
 
-      var deleteNode = function(client) {
+      Spacebrew.deleteNode = function(client) {
         var targetNode;
         dataflow.currentGraph.nodes.each(function(node) {
           if (node.client.equals(client)) {
@@ -183,9 +178,8 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
 
         dataflow.currentGraph.nodes.remove(targetNode);
       };
-      Spacebrew.deleteNode = deleteNode;
 
-      var addNode = function(client, x, y) {
+      Spacebrew.addNode = function(client, x, y) {
         return function() {
           // Deselect others
           dataflow.currentGraph.view.$(".dataflow-node").removeClass("ui-selected");
@@ -219,10 +213,6 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         };
       };
 
-      var addElement = function (info) {
-
-      };
-
       var itemTemplate = '<li><a class="button add"><i class="icon-<%- icon %>"></i></a><span class="name"><%- name %></span><span class="description"><%-description %></span></li>';
 
       var addSpacebrewItem = function(client) {
@@ -238,7 +228,6 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         });
         if (alreadyAdded) return;
 
-
         var $item = $(_.template(itemTemplate, {
           name: name,
           description: client.remoteAddress,
@@ -253,16 +242,14 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
               return helper;
             },
             stop: function(event, ui) {
-              addNode(client, ui.position.left, ui.position.top).call();
+              Spacebrew.addNode(client, ui.position.left, ui.position.top).call();
             }
           })
-          .click(addNode(client));
+          .click(Spacebrew.addNode(client));
         $Spacebrew.append($item);
       };
 
-      Spacebrew.addNode = addNode;
-
-      var update = function(options) {
+      Spacebrew.update = function(options) {
         options = options ? options : {};
 
         $Spacebrew.empty();
@@ -270,7 +257,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
           addSpacebrewItem(client);
         });
       };
-      update();
+      this.update();
 
       dataflow.addPlugin({
         id: "spacebrew", 
@@ -280,8 +267,6 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
         icon: "minus",
         pinned: false
       });
-
-      Spacebrew.update = update;
 
       Spacebrew.onSearch = function (text, callback) {
         var results = [];
@@ -296,7 +281,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
             source: 'spacebrew',
             icon: 'fa-connect',
             action: function () {
-              addNode(node).call();
+              Spacebrew.addNode(node).call();
             },
             label: name,
             description: node.description
@@ -327,7 +312,7 @@ define(["App", "underscore", "dataflow", "collections/ClientCollection", "models
           callback(results);
         },
         execute: function (item) {
-          addNode(item).call();
+          Spacebrew.addNode(item).call();
         }
       });
     };
