@@ -97,6 +97,7 @@ define(["d3.v3.min"],
           .attr("cx", function(d) { return d.x; })
           .attr("cy", function(d) { return d.y; })
           .attr("r", function(d) { return (d.children ? 4.5 : Math.sqrt(d.size) / 5); })
+          
           .on("click", click)
           .on("mousedown", mousedown)
           .on("mousemove", mousemove)

@@ -1,25 +1,25 @@
 {
- "name": "flare",
+ "name": "Light Bulb",
  "size": 11721,
  "children": [
   {
-   "name": "analytics",
+   "name": "Camera Lab",
    "size": 99999
   },
   {
-   "name": "data",
+   "name": "PS Move",
    "size": 11721,
    "children": [
     {
-     "name": "converters",
+     "name": "Photo frame",
      "children": [
-      {"name": "Converters", "size": 1221},
-      {"name": "DelimitedTextConverter", "size": 4294}
+      {"name": "Front door", "size": 1221},
+      {"name": "Middle screen", "size": 4294}
      ]
     },
-    {"name": "DataField", "size": 11721},
-    {"name": "DataSchema", "size": 11721},
-    {"name": "DataSet", "size": 11721}
+    {"name": "Barry's light", "size": 11721},
+    {"name": "Kia's light", "size": 11721},
+    {"name": "Maria's light", "size": 11721}
    ]
   }
  ]

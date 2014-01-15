@@ -259,7 +259,8 @@ line.link {
 	position: relative;
 }
 
-.dataflow-card .dataflow-node-inspector-inputs {
+.dataflow-card .dataflow-node-inspector-inputs,
+ .dataflow-card.dataflow-plugin-inspector {
 	text-shadow: 0 0px !important;
 }
 
