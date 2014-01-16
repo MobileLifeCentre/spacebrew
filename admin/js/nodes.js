@@ -18,7 +18,6 @@ define(["js/d3.v3.min"],
         .attr("width", w)
         .attr("height", h);
 
-    console.log(vis);
     d3.json("js/flare.json", function(json) {
       root = json;
       root.fixed = true;
@@ -56,10 +55,7 @@ define(["js/d3.v3.min"],
       node = vis.selectAll("circle.node")
           .data(nodes, function(d) { return d.id; })
           .style("fill", color);
-
-      node.transition()
-          .attr("r", function(d) { return d.children ? 4.5 : Math.sqrt(d.size) / 10; });
-
+          
       // Enter any new nodes.
       node.enter().append("svg:circle")
           .attr("class", "node")

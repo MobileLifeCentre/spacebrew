@@ -53,6 +53,11 @@ define(["d3.v3.min"],
       update();
     });
 
+    // Taken from: http://stackoverflow.com/questions/5560248/programmatically-lighten-or-darken-a-hex-color
+    function shadeColor(color, percent) {   
+        var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, G = (num >> 8 & 0x00FF) + amt, B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+    }
 
     function update() {
       var nodes = flatten(root),
@@ -80,30 +85,33 @@ define(["d3.v3.min"],
       link.exit().remove();
 
       // Update the nodes…
-      node = vis.selectAll("circle.node")
+      node = vis.selectAll("g.node")
           .data(nodes, function(d) { return d.id; });
 
-      node.transition()
+      node.select("circle")
+          .transition()
           .attr("r", function(d) { 
             if (d == _selectedNode) {
-              return 30;
+              return 50;
             }
-            return d.children ? 4.5 : Math.sqrt(d.size) / 5; 
+            return d.children ? 4.5 : d.size; 
+          })
+          .style("fill", function(d) { 
+            if (d == _selectedNode) {
+              return shadeColor(color(d), 20);
+            }
+
+            return color(d); 
           });
+          
 
       // Enter any new nodes.
-      node.enter().append("svg:circle")
-          .attr("class", function(d) { return "node id" + d.index})
-          .attr("cx", function(d) { return d.x; })
-          .attr("cy", function(d) { return d.y; })
-          .attr("r", function(d) { return (d.children ? 4.5 : Math.sqrt(d.size) / 5); })
-          
-          .on("click", click)
-          .on("mousedown", mousedown)
-          .on("mousemove", mousemove)
-          .on("drag", mousemove)
-          .style("fill", color)
-          .call(force.drag()
+      var newNodes = node.enter().append("g")
+        .attr("class", function(d) { return "node id" + d.index})
+        .attr("transform", function(d){ return "translate("+d.x+",80)"})
+        .on("click", click)
+        .on("mousedown", mousedown)
+        .call(force.drag()
             // Attracting force towards the selecting node
             .on("drag.force", function(d, i) {
               d.px = d3.event.x, 
@@ -120,20 +128,31 @@ define(["d3.v3.min"],
                   d.py = selectNode.center.y - distanceToCenterY/1.4;
                 }
               }
-              force.resume(); // restart annealing
             }));
+
+        newNodes.append("svg:circle")
+          .attr("r", function(d) { return (d.children ? 4.5 : d.size); })
+          .style("fill", color);
+
+        newNodes.append("text")
+          .attr("dx", 12)
+          .attr("dy", ".35em")
+          .attr("fill", "white")
+          .text(function(d) { return d.name });
+
       // Exit any old nodes.
       node.exit().remove();
     }
 
     function tick() {
-      link.attr("x1", function(d) { return ( false && selectNode.highlighted && d.source == _selectedNode? selectNode.center.x: d.source.x); })
-          .attr("y1", function(d) { return (false && selectNode.highlighted && d.source == _selectedNode? selectNode.center.y: d.source.y); })
-          .attr("x2", function(d) { return (false && selectNode.highlighted && d.target == _selectedNode? selectNode.center.x: d.target.x); })
-          .attr("y2", function(d) { return (false && selectNode.highlighted && d.target == _selectedNode? selectNode.center.y: d.target.y); });
+      link.attr("x1", function(d) { return d.source.x;})
+          .attr("y1", function(d) { return d.source.y;})
+          .attr("x2", function(d) { return d.target.x;})
+          .attr("y2", function(d) { return d.target.y;});
 
-      node.attr("cx", function(d) { return (false && selectNode.highlighted && d == _selectedNode? selectNode.center.x: d.x); })
-          .attr("cy", function(d) { return(false && selectNode.highlighted && d == _selectedNode? selectNode.center.y: d.y); });
+      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+      //node.attr("cx", function(d) { return (false && selectNode.highlighted && d == _selectedNode? selectNode.center.x: d.x); })
+      //    .attr("cy", function(d) { return(false && selectNode.highlighted && d == _selectedNode? selectNode.center.y: d.y); });
     }
 
     // Color leaf nodes orange, and packages white or blue.
@@ -143,7 +162,6 @@ define(["d3.v3.min"],
 
     // Toggle children on click.
     function click(d) {
-
       // click after drag on node
       if (d3.event.defaultPrevented && _selectedNode != undefined) {
         mouseup(d);
@@ -155,7 +173,6 @@ define(["d3.v3.min"],
         window.spacebrewInspector.closeView();
         return;
       }
-
 
       // click on node
       if (d.children) {
@@ -193,20 +210,6 @@ define(["d3.v3.min"],
       } 
       _mousedown = false;
       _selectedNode = null;
-      update();
-    }
-
-    // Toggle children on click.
-    function mousemove(d) {
-      if (d == _selectedNode) {
-        if (selectNode.highlighted) {
-          // SELECTED CIRCLE
-          vis.select("circle.id" + d.index)
-          .attr("r", 30);
-        } 
-
-        if (!_mousedown) return;
-      }
       update();
     }
 

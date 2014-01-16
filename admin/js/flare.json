@@ -1,25 +1,25 @@
 {
- "name": "Light Bulb",
- "size": 11721,
+ "name": "Camera Lab",
+ "size": 20,
  "children": [
   {
-   "name": "Camera Lab",
-   "size": 99999
+   "name": "Light Bulb",
+   "size": 40
   },
   {
    "name": "PS Move",
-   "size": 11721,
+   "size": 20,
    "children": [
     {
      "name": "Photo frame",
      "children": [
-      {"name": "Front door", "size": 1221},
-      {"name": "Middle screen", "size": 4294}
+      {"name": "Front door", "size": 20},
+      {"name": "Middle screen", "size": 20}
      ]
     },
-    {"name": "Barry's light", "size": 11721},
-    {"name": "Kia's light", "size": 11721},
-    {"name": "Maria's light", "size": 11721}
+    {"name": "Barry's light", "size": 20},
+    {"name": "Kia's light", "size": 20},
+    {"name": "Maria's light", "size": 20}
    ]
   }
  ]
