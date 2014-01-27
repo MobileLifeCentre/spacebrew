@@ -179,7 +179,7 @@ var addEndpoints = function(msg){
 var updateEndpoints = function(msg, newMsg){
 	var clientName = msg.config.name,
 		remoteAddress = msg.config.remoteAddress,
-		i,endpoint,currM,id;
+		i, endpoint, currM, id;
 
 	if (msg.config.publish && msg.config.publish.messages){
 		i = msg.config.publish.messages.length;
@@ -203,8 +203,9 @@ var updateEndpoints = function(msg, newMsg){
 			id = getCommItemSelector(false, clientName, remoteAddress, currM.name, currM.type);
 			
 			var newM = newMsg.config.subscribe.messages[i];
+
 			newId = getCommItemSelector(false, clientName, remoteAddress, newM.name, newM.type);
-			var endpointM = getCommItemDef(false, clientName, remoteAddress, newM.name, newM.type, newM.label);
+			var endpointM = getCommItemDef(false, clientName, remoteAddress, newM.name, newM.type, newM.label, newM.typeLabel);
 
 			var newDOM = pubsubItemTemplate(endpointM);
 			var oldDOM = myPlumb.endpoints[id].element;
@@ -228,7 +229,7 @@ var handleConfigMsg = function(msg){
 				clients[j].config = msg.config;
 				var itemsMarkup = $(pubsubTemplate(clients[j]));
 				itemsMarkup.find(".itemwrapper").click(clickItem).hover(overItem, outItem);
-				//itemsMarkup.find(".deletebutton").click(clickDelete);
+				
 				var client = $("#"+msg.config.name.Safetify()+"_"+msg.config.remoteAddress.Safetify());
 				client.append(itemsMarkup);
 				addEndpoints(msg);
@@ -299,15 +300,6 @@ var addConnection = function(msg){
 var handleSelecting = function(pubId, subId){
 	$("#"+subId).addClass(pubId);
 	$("#"+pubId).addClass(subId);
-	// if (currState == PUB_SELECTED){
-	// 	if (pubId == $(".publisher.selected").prop('id')){
-	// 		$("#"+subId).addClass("selected");
-	// 	}
-	// } else if (currState == SUB_SELECTED){
-	// 	if (subId == $(".subscriber.selected").prop('id')){
-	// 		$("#"+pubId).addClass("selected");
-	// 	}
-	// }
 };
 
 var handleUnselecting = function(pubId, subId){
