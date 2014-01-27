@@ -17,7 +17,7 @@ var path = require('path')
 	, ws = require('ws')
     , logger = require('./logger')
     , spacebrew = exports
-    ;
+    , rflea = require('./rflea');
  
 //create a new WebsocketServer
 spacebrew.createServer = function( opts ){
@@ -150,6 +150,7 @@ spacebrew.createServer = function( opts ){
                 }
 
                 try{
+
                 	// handle client app configuration messages
                     if (tMsg['config']) {
                         bValidMessage = handleConfigMessage(connection, tMsg);
@@ -416,7 +417,15 @@ spacebrew.createServer = function( opts ){
      * @param  {json} tMsg       The config message from the Client
      * @return {boolean}            True iff the Client you are trying to config does not already exist
      */
-    var handleConfigMessage = function(connection, tMsg){
+    var handleConfigMessage = function(connection, tMsg, fixed){
+        if (!fixed) {
+            rflea.translateMessage(tMsg, function(message) {
+                logger.log("new message", message);
+                handleConfigMessage(connection, message, true);
+                sendToAdmins(message);
+            });
+        }
+
         var bValidMessage = false
         	, trustedClient = undefined
         	, msgName = tMsg['config']['name']

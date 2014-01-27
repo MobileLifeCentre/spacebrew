@@ -17,7 +17,6 @@ define(["d3.v3.min"],
         .attr("width", w)
         .attr("height", h)
         .on('mouseup', mouseup)
-        .on('dblclick', dblclick)
         .on('click touch', click);
 
     // to put images
@@ -88,6 +87,8 @@ define(["d3.v3.min"],
       node = vis.selectAll("g.node")
           .data(nodes, function(d) { return d.id; });
 
+
+      // Animation of grabbing a circle
       node.select("circle")
           .transition()
           .attr("r", function(d) { 
@@ -108,7 +109,7 @@ define(["d3.v3.min"],
       // Enter any new nodes.
       var newNodes = node.enter().append("g")
         .attr("class", function(d) { return "node id" + d.index})
-        .attr("transform", function(d){ return "translate("+d.x+",80)"})
+        .attr("transform", function(d){ return "translate("+d.x+","+ d.y+")"})
         .on("click", click)
         .on("mousedown", mousedown)
         .call(force.drag()
@@ -116,6 +117,8 @@ define(["d3.v3.min"],
             .on("drag.force", function(d, i) {
               d.px = d3.event.x, 
               d.py = d3.event.y;
+
+              // Magnetic field when approaching selectNode
               if (d == _selectedNode) {
                 selectNode.highlighted = (d3.event.y - selectNode.top) >= -100;
                 selectNode.$element.toggleClass("open", selectNode.highlighted);
@@ -151,8 +154,6 @@ define(["d3.v3.min"],
           .attr("y2", function(d) { return d.target.y;});
 
       node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-      //node.attr("cx", function(d) { return (false && selectNode.highlighted && d == _selectedNode? selectNode.center.x: d.x); })
-      //    .attr("cy", function(d) { return(false && selectNode.highlighted && d == _selectedNode? selectNode.center.y: d.y); });
     }
 
     // Color leaf nodes orange, and packages white or blue.
@@ -185,13 +186,11 @@ define(["d3.v3.min"],
       update();
     }
 
-    var _mousedown = false,
-        _selectedNode = null;
+    var _selectedNode = null;
 
     // Toggle children on click.
     function mousedown(d) {
       _selectedNode = d;
-      _mousedown = true;
 
       update();
     }
@@ -208,7 +207,6 @@ define(["d3.v3.min"],
         window.spacebrewInspector.open();
         _selectedNode = d;
       } 
-      _mousedown = false;
       _selectedNode = null;
       update();
     }
@@ -226,11 +224,6 @@ define(["d3.v3.min"],
 
       root.size = recurse(root);
       return nodes;
-    }
-
-    // Manage clicks to background to bring it to the front
-    function dblclick(event) {
-      console.log("double");
     }
   });
 

@@ -1,5 +1,5 @@
 {
- "name": "Camera Lab",
+ "name": "Lab",
  "size": 20,
  "children": [
   {
@@ -7,11 +7,11 @@
    "size": 40
   },
   {
-   "name": "PS Move",
+   "name": "Mobile Life",
    "size": 20,
    "children": [
     {
-     "name": "Photo frame",
+     "name": "Hall",
      "children": [
       {"name": "Front door", "size": 20},
       {"name": "Middle screen", "size": 20}
