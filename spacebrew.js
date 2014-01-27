@@ -269,8 +269,13 @@ spacebrew.createServer = function( opts ){
         if (pub = pubClient.publishers[tMsg.message.name]) {
 
             // if publisher is of the appropriate type then send message to all subscribers
-            if (pub = pub[tMsg.message.type]) {
+            // if publisher has a redefined type fix it
+            var type = pub;
+            if ((pub = pub[tMsg.message.type]) || true) {
                 bValidMessage = true;
+                // TO-DO type fix
+                tMsg.message.type = Object.keys(type)[0];
+                pub = type[tMsg.message.type];
 
                 for(var j = pub.subscribers.length - 1; j >= 0; j--){
                     sub = pub.subscribers[j];

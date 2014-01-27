@@ -39,7 +39,7 @@ function processDevice(message, device, callback) {
 
             if (io != undefined) {
                 pub.label = io.name;
-                pub.typeLabel = io.type;
+                pub.type = io.type;
             }
             newPublishers[i] = pub;
 
@@ -52,7 +52,7 @@ function processDevice(message, device, callback) {
 
             if (io != undefined) {
                 sub.label = io.name;
-                sub.typeLabel = io.type;
+                sub.type = io.type;
             }
 
             newSubscribers[i] = sub;
