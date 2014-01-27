@@ -56,6 +56,20 @@ Handlebars.registerHelper("each_with_index", function(array, fn) {
 
 });
 
+Handlebars.registerHelper('ifDef', function(context, options) {
+  if(context) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
+Handlebars.registerHelper('ifNoDef', function(context, options) {
+  if(context == undefined) {
+    return options.fn(this);
+  }
+  return options.inverse(this);
+});
+
 //get the value of the requested key in the querystring
 //if the key does not exist in the query string, returns the empty string
 function gup( name ) {

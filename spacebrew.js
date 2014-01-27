@@ -424,6 +424,8 @@ spacebrew.createServer = function( opts ){
                 handleConfigMessage(connection, message, true);
                 sendToAdmins(message);
             });
+
+            return false;
         }
 
         var bValidMessage = false

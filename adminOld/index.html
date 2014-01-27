@@ -71,8 +71,20 @@
       <div class="itemwrapper publisher">
       <div class="item publisher {{type}}" id="pub_{{Safetify ../name}}_{{Safetify ../remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
         <div class="deletebutton">X</div>
-        <div class="itemanchor">{{type}}</div>
-        {{name}}
+        <div class="itemanchor">
+          {{#ifDef typeLabel }}
+            {{typeLabel}}
+          {{/ifDef}}
+          {{#ifNoDef type }}
+            {{type}}
+          {{/ifNoDef}}
+        </div>  
+        {{#ifDef label }}
+          {{label}}
+        {{/ifDef}}
+        {{#ifNoDef label }}
+          {{name}}
+        {{/ifNoDef}}
       </div>
       </div>
       {{/each}}
@@ -82,26 +94,41 @@
       <div class="itemwrapper subscriber">
       <div class="item subscriber {{type}}" id="sub_{{Safetify ../name}}_{{Safetify ../remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
         <div class="deletebutton">X</div>
-        <div class="itemanchor">{{type}}</div>
-        {{name}}
+        <div class="itemanchor">
+          {{#ifDef typeLabel }}
+            {{typeLabel}}
+          {{/ifDef}}
+          {{#ifNoDef type }}
+            {{type}}
+          {{/ifNoDef}}
+        </div>
+        {{#ifDef label }}
+          {{label}}
+        {{/ifDef}}
+        {{#ifNoDef label }}
+          {{name}}
+        {{/ifNoDef}}
       </div>
       </div>
       {{/each}}
     </div>
     </script>
-    <script type="text/x-handlebars-template" id="subscriber_item_handlebar">
-        <div class="item subscriber {{type}}" id="sub_{{Safetify name}}_{{Safetify remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
-          <div class="deletebutton">X</div>
-          <div class="itemanchor">{{type}}</div>
-          {{name}}
-        </div>
-    </script>
-    <script type="text/x-handlebars-template" id="publisher_item_handlebar">
-        <div class="item subscriber {{type}}" id="sub_{{Safetify name}}_{{Safetify remoteAddress}}_{{Safetify name}}_{{Safetify type}}" valign="middle">
-          <div class="deletebutton">X</div>
-          <div class="itemanchor">{{type}}</div>
-          {{name}}
-        </div>
+    <script type="text/x-handlebars-template" id="pubsub_item_handlebar">
+      <div class="deletebutton">X</div>
+      <div class="itemanchor">
+          {{#ifDef typeLabel }}
+            {{typeLabel}}
+          {{/ifDef}}
+          {{#ifNoDef type }}
+            {{type}}
+          {{/ifNoDef}}
+      </div>
+      {{#ifDef label }}
+        {{label}}
+      {{/ifDef}}
+      {{#ifNoDef label }}
+        {{name}}
+      {{/ifNoDef}}
     </script>
     <script type="text/x-handlebars-template" id="route_handlebar">
 {{#each_with_index routes}}

@@ -5219,6 +5219,9 @@ between this method and jsPlumb.reset).
 				_element = _getElementObject(el);
 				_elementId = _getId(_element);
 				self.elementId = _elementId;
+
+
+				var jpcl = jsPlumb.CurrentLibrary;
 				// need to get the new parent now
 				var newParentElement = _getParentFromParams({source:parentId, container:container}),
 				curParent = jpcl.getParent(self.canvas);

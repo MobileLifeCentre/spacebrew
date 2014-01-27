@@ -118,12 +118,22 @@ var getCommItemSelector = function(a_bPublisher, a_sClientName, a_sRemoteAddress
 									type: a_sType});
 };
 
-var getCommItemDef = function(a_bPublisher, a_sClientName, a_sRemoteAddress, a_sName, a_sType){
-	return { pub: (a_bPublisher?"pub":"sub"),
+var getCommItemDef = function(a_bPublisher, a_sClientName, a_sRemoteAddress, a_sName, a_sType, a_sLabel, a_sTypeLabel){
+	var result = { pub: (a_bPublisher?"pub":"sub"),
 									clientName: a_sClientName,
 									remoteAddress: a_sRemoteAddress,
 									name: a_sName,
 									type: a_sType};
+
+	if (a_sLabel) {
+		result.label = a_sLabel;
+	}
+
+	if (a_sTypeLabel) {
+		result.typeLabel = a_sTypeLabel;
+	}
+
+	return result;
 };
 
 var routeTemplate;
@@ -132,10 +142,8 @@ var clientTemplate;
 clientTemplate = Handlebars.compile(document.getElementById( 'client_handlebar' ).textContent);
 var pubsubTemplate;
 pubsubTemplate = Handlebars.compile(document.getElementById( 'pubsub_handlebar' ).textContent);
-var pubItemTemplate;
-pubItemTemplate = Handlebars.compile(document.getElementById( 'publisher_item_handlebar' ).textContent);
-var subItemTemplate;
-subItemTemplate = Handlebars.compile(document.getElementById( 'subscriber_item_handlebar' ).textContent);
+var pubsubItemTemplate;
+pubsubItemTemplate = Handlebars.compile(document.getElementById( 'pubsub_item_handlebar' ).textContent);
 
 
 var displayRoutes = function(){
@@ -168,10 +176,11 @@ var addEndpoints = function(msg){
 	}
 };
 
-var removeEndpoints = function(msg, newMsg){
+var updateEndpoints = function(msg, newMsg){
 	var clientName = msg.config.name,
 		remoteAddress = msg.config.remoteAddress,
 		i,endpoint,currM,id;
+
 	if (msg.config.publish && msg.config.publish.messages){
 		i = msg.config.publish.messages.length;
 		while (i--){
@@ -180,10 +189,11 @@ var removeEndpoints = function(msg, newMsg){
 			
 			var newM = newMsg.config.publish.messages[i];
 			newId = getCommItemSelector(true, clientName, remoteAddress, newM.name, newM.type);
-			var endpointM = getCommItemDef(true, clientName, remoteAddress, newM.name, newM.type);
+			var endpointM = getCommItemDef(true, clientName, remoteAddress, newM.name, newM.type, newM.label, newM.typeLabel);
 
-			myPlumb.endpoints[id].elementId = newId;
-			myPlumb.endpoints[id].element[0].parentNode.innerHTML = subItemTemplate(endpointM);
+			var newDOM = pubsubItemTemplate(endpointM);
+			var oldDOM = myPlumb.endpoints[id].element;
+			oldDOM.html(newDOM);
 		}
 	}
 	if (msg.config.subscribe && msg.config.subscribe.messages){
@@ -191,19 +201,19 @@ var removeEndpoints = function(msg, newMsg){
 		while(i--){
 			currM = msg.config.subscribe.messages[i];
 			id = getCommItemSelector(false, clientName, remoteAddress, currM.name, currM.type);
-
+			
 			var newM = newMsg.config.subscribe.messages[i];
 			newId = getCommItemSelector(false, clientName, remoteAddress, newM.name, newM.type);
-			var endpointM = getCommItemDef(false, clientName, remoteAddress, newM.name, newM.type);
+			var endpointM = getCommItemDef(false, clientName, remoteAddress, newM.name, newM.type, newM.label);
 
-			myPlumb.endpoints[id].elementId = newId;
-			myPlumb.endpoints[id].element[0].parentNode.innerHTML = subItemTemplate(endpointM);
+			var newDOM = pubsubItemTemplate(endpointM);
+			var oldDOM = myPlumb.endpoints[id].element;
+			oldDOM.html(newDOM);
 		}
 	}
 };
 
 var handleConfigMsg = function(msg){
-	console.log(msg);
 	for(var j = 0; j < clients.length; j++){
 		if (clients[j].name === msg.config.name
 			&& clients[j].remoteAddress === msg.config.remoteAddress){
@@ -211,11 +221,9 @@ var handleConfigMsg = function(msg){
 			//the old endpoints and old markup
 			//Clean previous client
 			if (clients[j].config != undefined) {
-				removeEndpoints({"config": clients[j].config}, msg);
-				
+				updateEndpoints({"config": clients[j].config}, msg);
+				clients[j].config = msg.config;
 			} else {
-
-
 				// new client
 				clients[j].config = msg.config;
 				var itemsMarkup = $(pubsubTemplate(clients[j]));
@@ -224,6 +232,7 @@ var handleConfigMsg = function(msg){
 				var client = $("#"+msg.config.name.Safetify()+"_"+msg.config.remoteAddress.Safetify());
 				client.append(itemsMarkup);
 				addEndpoints(msg);
+
 				//update the description
 				if (msg.config.description){
 					var idPart ="info_"+msg.config.name.Safetify()+"_"+msg.config.remoteAddress.Safetify(); 

@@ -26,13 +26,10 @@ function processDevice(message, device, callback) {
 
         for (var i in publishers) {
             var pub = publishers[i],
-                io = device.ios[pub.name] || device.ios[pub.original];
+                io = device.ios[pub.name];
 
-            if (pub.original == undefined) {
-                pub.original = pub.name;
-            }
-            pub.name = io.name;
-            pub.type = io.type;
+            pub.label = io.name;
+            pub.typeLabel = io.type;
 
             newPublishers[i] = pub;
         }
@@ -40,13 +37,10 @@ function processDevice(message, device, callback) {
 
         for (var i in subscribers) {
             var sub = subscribers[i],
-                io = device.ios[sub.name] || device.ios[sub.original];
+                io = device.ios[sub.name];
 
-            if (sub.original == undefined) {
-                sub.original = sub.name;
-            }
-            sub.name = io.name;
-            sub.type = io.type;
+            sub.label = io.name;
+            sub.typeLabel = io.type;
 
             newSubscribers[i] = sub;
         }
