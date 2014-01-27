@@ -419,13 +419,11 @@ spacebrew.createServer = function( opts ){
      */
     var handleConfigMessage = function(connection, tMsg, fixed){
         if (!fixed) {
-            rflea.translateMessage(tMsg, function(message) {
+            if (rflea.translateMessage(tMsg, function(message) {
                 logger.log("new message", message);
                 handleConfigMessage(connection, message, true);
                 sendToAdmins(message);
-            });
-
-            return false;
+            })) return false;
         }
 
         var bValidMessage = false

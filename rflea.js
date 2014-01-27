@@ -12,9 +12,18 @@ rflea.translateName = function(version, device) {
 };
 
 rflea.translateMessage = function (message, callback) {
-    db.getDevice(message["config"]["version"], message["config"]["device"], function(device) { 
-        processDevice(message, device, callback);
-    });
+    var version = message["config"]["version"],
+        device = message["config"]["device"];
+
+    if (version != undefined && device != undefined) {
+        db.getDevice(message["config"]["version"], message["config"]["device"], function(device) { 
+            processDevice(message, device, callback);
+        });
+
+        return true;
+    } else {
+        return false;
+    }
 };
 
 function processDevice(message, device, callback) {
@@ -28,10 +37,12 @@ function processDevice(message, device, callback) {
             var pub = publishers[i],
                 io = device.ios[pub.name];
 
-            pub.label = io.name;
-            pub.typeLabel = io.type;
-
+            if (io != undefined) {
+                pub.label = io.name;
+                pub.typeLabel = io.type;
+            }
             newPublishers[i] = pub;
+
         }
         message["config"]["publish"]["messages"] = newPublishers;
 
@@ -39,8 +50,10 @@ function processDevice(message, device, callback) {
             var sub = subscribers[i],
                 io = device.ios[sub.name];
 
-            sub.label = io.name;
-            sub.typeLabel = io.type;
+            if (io != undefined) {
+                sub.label = io.name;
+                sub.typeLabel = io.type;
+            }
 
             newSubscribers[i] = sub;
         }
@@ -48,7 +61,6 @@ function processDevice(message, device, callback) {
     } catch (e) {
         logger.log("debug", "[rflea error] something wrong happened when translating " + e);
     }
-
     callback(message);
 }
 
