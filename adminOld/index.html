@@ -53,7 +53,7 @@
   <div class="clientanchor"></div>
   <div class="clientcol clientdata">
     <div class="clientnickname" title="(no description)">
-      <span>{{name}}</span>
+      <span>{{#ifDef nameLabel }}{{nameLabel}}{{/ifDef}}{{#ifNoDef nameLabel }}{{name}}{{/ifNoDef}}</span>
     </div>
     <div class="clientname" title="(no description)">
       <span>{{name}} @ {{remoteAddress}}</span><span class="infobutton" id="button_info_{{Safetify name}}_{{Safetify remoteAddress}}">?</span>

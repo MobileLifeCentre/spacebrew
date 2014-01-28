@@ -248,6 +248,9 @@ var handleConfigMsg = function(msg){
 
 	//if we did not find a matching client, then add this one
 	var newClient = {name:msg.config.name, remoteAddress:msg.config.remoteAddress};
+	if (msg.config.nameLabel) {
+		newClient.nameLabel = msg.config.nameLabel;
+	}
 	var clientMarkup = $(clientTemplate(newClient));
 	clientMarkup.find(".infobutton").click(clickInfo);
 	$("#client_list").append(clientMarkup);

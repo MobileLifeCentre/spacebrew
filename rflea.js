@@ -32,7 +32,8 @@ function processDevice(message, device, callback) {
         subscribers = message["config"]["subscribe"]["messages"],
         newPublishers = [],
         newSubscribers = []; 
-
+        message["config"].nameLabel = device.name;
+        
         for (var i in publishers) {
             var pub = publishers[i],
                 io = device.ios[pub.name];
@@ -40,6 +41,9 @@ function processDevice(message, device, callback) {
             if (io != undefined) {
                 pub.label = io.name;
                 pub.type = io.type;
+                if (io.visibility) {
+                    pub.visibility = io.visibility;
+                }
             }
             newPublishers[i] = pub;
 
@@ -53,6 +57,9 @@ function processDevice(message, device, callback) {
             if (io != undefined) {
                 sub.label = io.name;
                 sub.type = io.type;
+                if (io.visibility) {
+                    pub.visibility = io.visibility;
+                }
             }
 
             newSubscribers[i] = sub;
