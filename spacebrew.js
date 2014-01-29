@@ -158,6 +158,7 @@ spacebrew.createServer = function( opts ){
 
                     // handle message messages (messages with routed data)
                     else if (tMsg['message']) {
+                        if (!connection.spacebrew_client_list) console.log(connection);
                         bValidMessage = handleMessageMessage(connection, tMsg);
                     } 
 
@@ -177,6 +178,7 @@ spacebrew.createServer = function( opts ){
                     // handle route add/remove messages
                     else if (tMsg['route']){
                         bValidMessage = handleRouteMessage(connection, tMsg);
+                        //console.log("route msg", bValidMessage);
                     } 
 
                     // print to console if message not recognized
@@ -231,6 +233,7 @@ spacebrew.createServer = function( opts ){
      * @return {boolean}      True iff the message comes from a publisher that exists
      */
     var handleMessageMessage = function(connection, tMsg){
+
     	var pubClient = undefined
     		, bValidMessage = false
     		, pub = undefined
@@ -266,16 +269,16 @@ spacebrew.createServer = function( opts ){
         tMsg['message'].remoteAddress = getClientAddress(connection);
 
         // if publishing client does have the appropriate publisher then continue processing the message
-        if (pub = pubClient.publishers[tMsg.message.name]) {
+        if (pub = pubClient.publishers[tMsg.message.name] ) {
 
             // if publisher is of the appropriate type then send message to all subscribers
             // if publisher has a redefined type fix it
             var type = pub;
-            if ((pub = pub[tMsg.message.type]) || true) {
+            if ((pub = pub[tMsg.message.type]) ) {
                 bValidMessage = true;
-                // TO-DO type fix
-                tMsg.message.type = Object.keys(type)[0];
-                pub = type[tMsg.message.type];
+
+                type = Object.keys(type)[0];
+                tMsg.message.type = type;
 
                 for(var j = pub.subscribers.length - 1; j >= 0; j--){
                     sub = pub.subscribers[j];
@@ -351,7 +354,7 @@ spacebrew.createServer = function( opts ){
                 if (trustedClients[i].name === sub.clientName
                     && trustedClients[i].remoteAddress === sub.remoteAddress){
                     subClient = trustedClients[i];
-                    subEntry = subClient.subscribers[sub.name][sub.type];
+                    subEntry = (subClient.subscribers[sub.name] ? subClient.subscribers[sub.name][sub.type]: undefined);
                 }
             }
             //if we have found a matching publisher and subscriber, 
@@ -364,11 +367,13 @@ spacebrew.createServer = function( opts ){
                     //then ignore this message
                     if (areRoutedTogether(pubClient, pubEntry, subClient, subEntry)){
                         return false;
+                    } else {
+                        pubEntry.subscribers.push({client:subClient,subscriber:subEntry});
+                        subEntry.publishers.push({client:pubClient,publisher:pubEntry});
                     }
                     //if not, route them
                     bValidMessage = true;
-                    pubEntry.subscribers.push({client:subClient,subscriber:subEntry});
-                    subEntry.publishers.push({client:pubClient,publisher:pubEntry});
+                   
                 } else if (tMsg.route.type == "remove"){
                     //If the designated publisher and subscriber are NOT routed together currently
                     //then ignore this message
@@ -425,7 +430,6 @@ spacebrew.createServer = function( opts ){
     var handleConfigMessage = function(connection, tMsg, fixed){
         if (!fixed) {
             if (rflea.translateMessage(tMsg, function(message) {
-                logger.log("new message", message);
                 handleConfigMessage(connection, message, true);
                 sendToAdmins(message);
             })) return false;
