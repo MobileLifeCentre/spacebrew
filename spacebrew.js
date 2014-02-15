@@ -158,7 +158,6 @@ spacebrew.createServer = function( opts ){
 
                     // handle message messages (messages with routed data)
                     else if (tMsg['message']) {
-                        if (!connection.spacebrew_client_list) console.log(connection);
                         bValidMessage = handleMessageMessage(connection, tMsg);
                     } 
 
@@ -208,6 +207,7 @@ spacebrew.createServer = function( opts ){
          * @param  {obj} ws The object containing information about the connection that is being closed
          */
         ws.on('close', function(ws) {
+            connection._socket = undefined;
             cleanupClosedConnections();
         });
 
@@ -770,7 +770,6 @@ spacebrew.createServer = function( opts ){
         var removed = [];
 
         for(var i = 0; i < trustedClients.length;){
-            //logger.log("info", trustedClients);
             if (!trustedClients[i].connection._socket){
                 removeRoutesInvolvingClient(trustedClients[i]);
                 removed.push({name:trustedClients[i].name, remoteAddress:trustedClients[i].remoteAddress});
@@ -780,6 +779,7 @@ spacebrew.createServer = function( opts ){
             }
         }
 
+        logger.log("remove", removed);
         //remove Admins
         //logger.log("info", "There are admins: "+ adminConnections.length);
         for(var i = 0; i < adminConnections.length;){
@@ -825,7 +825,8 @@ spacebrew.createServer = function( opts ){
                     continue;
                 }
                 currConn.ping("ping");
-            } catch(err){
+            } catch(err) {
+                logger.log(err);
                 logger.log("warn", "[pingAllClients] CAN'T PING CLIENT, CONNECTION ALREADY CLOSED");
             }
         };
