@@ -20,6 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "ws": "~0.4.25",
-    "forever-monitor": "1.1.0"
+    "forever-monitor": "1.1.0",
+    "firebase": "~1.0.5"
   }
 }
